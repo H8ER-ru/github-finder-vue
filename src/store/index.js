@@ -12,7 +12,7 @@ const store =  new Vuex.Store({
     currentSortDir: 'asc',
     page: {
       current: 1,
-      length: 5
+      length: 6
     }
   },
   mutations: {

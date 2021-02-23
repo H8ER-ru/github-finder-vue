@@ -5,8 +5,11 @@
     </div>
     <div class="personal-detail__info">
       <a :href="user.html_url" class="personal-detail__name">{{ user.login }}</a>
+      <div class="personal-detail__name" v-if="user.name">Name: {{user.name}}</div>
       <div class="personal-detail__repo">Public Repository: {{user.public_repos}}</div>
       <div class="personal-detail_followers"> Followers:  {{user.followers}}</div>
+      <div class="personal-detail_followers" v-if="user.blog">Blog: <a :href="user.blog"> {{user.blog}}</a></div>
+      <div class="personal-detail_followers" v-if="user.bio">BIO:  {{user.bio}}</div>
     </div>
   </div>
 </template>
