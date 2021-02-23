@@ -1,6 +1,6 @@
 <template>
   <div class="repository__list">
-    <div class="repository__item" v-for="rep in repositoriesList" :key="rep.id">
+    <div class="repository__item" v-for="rep in repositoriesSort" :key="rep.id">
 
       <div class="repository__info">
         <a target="_blank" :href="rep.html_url">{{rep.name}}</a>
@@ -12,11 +12,24 @@
 </template>
 
 <script>
+import {mapGetters} from "vuex";
+
 export default {
   name: "RepositoriesList",
-  props:{
-    repositoriesList:{
-      type: Array
+  computed:{
+    ...mapGetters(['getRepositories', 'getCurrentSort', 'getCurrentSortDir', 'getCurrentPage', 'getPageLength']),
+    repositoriesSort(){
+      return this.getRepositories.sort((a, b) =>{
+        let mod = 1
+        if(this.getCurrentSortDir === 'desc') mod=-1
+        if(a[this.getCurrentSort] < b[this.getCurrentSort]) return -1*mod
+        if(a[this.getCurrentSort] > b[this.getCurrentSort]) return mod
+        return 0
+      }).filter((row,index) => {
+        let start = (this.getCurrentPage - 1)*this.getPageLength
+        let end = this.getCurrentPage * this.getPageLength
+        if(index >= start && index < end) return true
+      })
     }
   }
 }

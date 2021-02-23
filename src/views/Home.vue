@@ -4,8 +4,8 @@
       <div class="container">
         <Search @searchStart="getRepository" :value="search" placeholder="Type username..." @search="search = $event"/>
 
-        <div class="error" v-if="this.$store.state.errorMessage">
-          <p>{{this.$store.state.errorMessage}}</p>
+        <div class="error" v-if="this.getErrorMessage">
+          <p>{{this.getErrorMessage}}</p>
         </div>
 
         <Profile :user="this.$store.state.user"/>
@@ -17,15 +17,15 @@
             <button class="sort-btns__item " @click="sort('stargazers_count')" >Sort by stars</button>
           </div>
 
-          <RepositoriesList :repositoriesList="repositoriesSort"/>
+          <RepositoriesList />
 
         </div>
       </div>
     </section>
     <section class="container">
-      <div class="pagination" v-if="this.$store.state.repositories.length > 0">
+      <div class="pagination" v-if="this.getRepositories.length > 0">
         <div class="pagination__item" @click="prevPage">🠔</div>
-        <div class="pagination__text">{{page.current}}</div>
+        <div class="pagination__text">{{getCurrentPage}}</div>
         <div class="pagination__item" @click="nextPage">🠖</div>
       </div>
     </section>
@@ -37,6 +37,7 @@ import axios from 'axios'
 import Search from "@/components/Search";
 import Profile from "@/components/Profile";
 import RepositoriesList from "@/components/RepositoriesList";
+import {mapGetters} from "vuex";
 
 export default {
   components:{
@@ -46,24 +47,18 @@ export default {
   },
   data: () => ({
     search: 'github',
-    currentSort: 'name',
-    currentSortDir: 'asc',
-    page: {
-      current: 1,
-      length: 5
-    }
   }),
   methods:{
     sort(e){
-      if(e === this.currentSort) {
-        this.currentSortDir = this.currentSortDir === 'asc' ? 'desc' : 'asc'
+      if(e === this.getCurrentSort) {
+        this.$store.state.currentSortDir = this.getCurrentSortDir === 'asc' ? 'desc' : 'asc'
       }
-      this.currentSort = e
+      this.$store.state.currentSort = e
     },
     getRepository(){
       axios.get(`https://api.github.com/users/${this.search}/repos`)
         .then(res => {
-          this.page.current = 1
+          this.$store.state.page.current = 1
           if(res.data.length === 0){
             this.$store.state.errorMessage = "can't find that user"
             this.$store.state.repositories = []
@@ -87,26 +82,14 @@ export default {
       })
     },
     prevPage(){
-      if(this.page.current > 1) this.page.current--
+      if(this.getCurrentPage > 1) this.$store.state.page.current--
     },
     nextPage(){
-      if(this.page.current * this.page.length < this.$store.state.repositories.length) this.page.current++
+      if(this.getCurrentPage * this.getPageLength < this.$store.state.repositories.length) this.$store.state.page.current++
     }
   },
   computed: {
-    repositoriesSort(){
-      return this.$store.state.repositories.sort((a, b) =>{
-        let mod = 1
-        if(this.currentSortDir === 'desc') mod=-1
-        if(a[this.currentSort] < b[this.currentSort]) return -1*mod
-        if(a[this.currentSort] > b[this.currentSort]) return mod
-        return 0
-      }).filter((row,index) => {
-        let start = (this.page.current - 1)*this.page.length
-        let end = this.page.current * this.page.length
-        if(index >= start && index < end) return true
-      })
-    }
+    ...mapGetters(['getRepositories', 'getCurrentSort', 'getCurrentSortDir', 'getCurrentPage','getPageLength', 'getErrorMessage']),
   },
 }
 </script>
