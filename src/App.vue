@@ -1,12 +1,28 @@
 <template>
-  <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
+  <div class="wrapper">
+    <header>
+      <div class="navbar">
+        <div class="container">
+          <div class="navbar-content">
+            <div class="logo">github finder</div>
+
+          </div>
+        </div>
+      </div>
+    </header>
     <router-view/>
   </div>
 </template>
+
+<script>
+export default {
+  data: () => ({
+    links:{
+      title:{ title: 'Home', path: '/'}
+    }
+  }),
+}
+</script>
 
 <style lang="scss">
 #app {
