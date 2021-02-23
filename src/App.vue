@@ -4,8 +4,10 @@
       <div class="navbar">
         <div class="container">
           <div class="navbar-content">
-            <div class="logo">github finder</div>
-
+            <div class="logo">Github finder</div>
+            <div class="navbar-item">
+              <a target="_blank" href="https://github.com/H8ER-ru">My Gitgub</a>
+            </div>
           </div>
         </div>
       </div>

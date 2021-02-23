@@ -1,5 +1,5 @@
 <template>
-  <div class="wrapper-content wrapper-content--fixed">
+  <div class="wrapper-content wrapper-content--fixed" theme='light'>
     <section>
       <div class="container">
         <Search @searchStart="getRepository" :value="search" placeholder="Type username..." @search="search = $event"/>
@@ -13,8 +13,8 @@
         <div class="repository__wrapper">
 
           <div class="sort-btns" v-if="this.$store.state.repositories.length > 0">
-            <button class="sort-btn__item btn btnDefaul " @click="sort('name')" >Sort by Name</button>
-            <button class="sort-btn__item btn btnDefaul " @click="sort('stargazers_count')" >Sort by stars</button>
+            <button class="sort-btns__item " @click="sort('name')" >Sort by Name</button>
+            <button class="sort-btns__item " @click="sort('stargazers_count')" >Sort by stars</button>
           </div>
 
           <RepositoriesList :repositoriesList="repositoriesSort"/>
@@ -23,10 +23,10 @@
       </div>
     </section>
     <section class="container">
-      <div class="button-list" v-if="this.$store.state.repositories.length > 0">
-        <div class="btn btnPrimary" @click="prevPage">🠔</div>
-        <div>{{page.current}}</div>
-        <div class="btn btnPrimary" @click="nextPage">🠖</div>
+      <div class="pagination" v-if="this.$store.state.repositories.length > 0">
+        <div class="pagination__item" @click="prevPage">🠔</div>
+        <div class="pagination__text">{{page.current}}</div>
+        <div class="pagination__item" @click="nextPage">🠖</div>
       </div>
     </section>
   </div>
@@ -63,7 +63,7 @@ export default {
     getRepository(){
       axios.get(`https://api.github.com/users/${this.search}/repos`)
         .then(res => {
-          console.log(res)
+          this.page.current = 1
           if(res.data.length === 0){
             this.$store.state.errorMessage = "can't find that user"
             this.$store.state.repositories = []
@@ -112,6 +112,7 @@ export default {
 </script>
 
 <style scoped lang="sass">
+@import "src/assets/utils/vars"
 .button-list
   text-align: center
   display: flex
@@ -132,4 +133,20 @@ export default {
   display: flex
   justify-content: space-between
   align-items: center
+  &__item
+    background-color: transparent
+    border: 0
+    cursor: pointer
+    padding: 0
+    border-bottom: 1px solid transparent
+    transition: .3s linear border-bottom-color
+    &:hover
+      border-bottom-color: $neutral-primary
+.pagination
+  display: flex
+  justify-content: space-between
+  &__item, &__text
+    font-size: 22px
+    padding: 5px
+    cursor: pointer
 </style>
